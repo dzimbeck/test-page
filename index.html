@@ -30,6 +30,7 @@ var isConnected = false;
 async function login() {
     if (window.ethereum) {    
         console.log("connecting");
+        await window.ethereum.request({method: 'eth_requestAccounts'});
         web3 = new Web3(window.ethereum);
         console.log("success");
         document.getElementById("Loaded").innerHTML = "Welcome to the BitBay bridge";
