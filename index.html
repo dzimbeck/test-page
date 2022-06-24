@@ -156,7 +156,7 @@ async function showPegChart() {
     iters = 0;
     iters2 = 0;
     min = 0;
-    max = parseInt(result2[0] * result2[2]);
+    max = parseInt(result2[1] * result2[2]);
     if(document.getElementById("range1").value == "") {
         document.getElementById("range1").value = min;
     } else {
@@ -234,7 +234,7 @@ function paintchart(mylabels, mydata, highkey) {
       axisY: {
         labelInterpolationFnc: function(value, index) {
           return index % 0 === 0 ? value : null;
-        },        
+        }
       },
       plugins: [
         Chartist.plugins.tooltip()
