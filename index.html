@@ -15,6 +15,8 @@
 <input class="textBox" id="range1" type="text" maxlength="30"    required/>
 <input class="textBox" id="range2" type="text" maxlength="30"    required/>
 <div id="chartContainer" style="height: 150px; width: 50%; border: 5px solid #d9dbda"></div>
+<br><br>
+<p id="networkinfo"></p>
 <script src="web3.min.js"></script>
 <script src="merkletree.js"></script>
 <script type="text/javascript" src="./BAYL.js"></script>
@@ -34,7 +36,7 @@ window.addEventListener('ethereum#initialized', login, {
     once: true,
 });
 async function login() {
-    if (window.ethereum) {    
+    if (window.ethereum) { //Note: for mobile this only works if the webpage has <head> tag
         console.log("connecting");
         await window.ethereum.request({method: 'eth_requestAccounts'});
         web3 = new Web3(window.ethereum);
@@ -53,6 +55,9 @@ baydatacontract = '';
 baylcontract = '';
 bayrcontract = '';
 bayfcontract = '';
+networkvars = [];
+reservetimelock = 2629800;
+
 
 async function checkbalances() {
     if (!isConnected) {
@@ -71,6 +76,12 @@ async function checkbalances() {
         BAYRaddy = "0xe491CC5b00e24fE53cCA89adaC79f5D7FdA80a82";
         BAYFaddy = "0x3c4Fa78cA311FF83A5EdF60140B0b45e8c39eBf9";
         BAYDataAddy = "0x7Be96cCeeB7D6488d1656DD43631a61e553a43E7";
+        BAYAdmin = "0xC2aDC15DAbb9D395700da75eA2CD7f7b912B8C35";
+        pegsteps = 30;
+        microsteps = 8;
+        deflationrate = 99;
+        compoundrate = 5;
+        reservetimelock = 120; //Testnet is actually 120 seconds but github reads 10 minutes
     }
     if (netname == "unknown") {
         document.getElementById("text1").innerHTML = "Unsupported network";
@@ -79,7 +90,10 @@ async function checkbalances() {
     baydatacontract = new web3.eth.Contract(BAYDataAbi, BAYDataAddy)
     baylcontract = new web3.eth.Contract(BAYLabi, BAYLaddy);
     bayrcontract = new web3.eth.Contract(BAYRabi, BAYRaddy);
-    bayfcontract = new web3.eth.Contract(BAYFabi, BAYFaddy);    
+    bayfcontract = new web3.eth.Contract(BAYFabi, BAYFaddy);
+    await baydatacontract.methods.getState().call().then(function (netvars) {
+        networkvars = netvars;
+    })
     await baylcontract.methods.balanceOf(myaccounts).call().then(function (liquid) {
         BAYLBal = web3.utils.fromWei(liquid, 'gwei')*10;         
     })
@@ -97,6 +111,17 @@ async function checkbalances() {
         document.getElementById("text1").innerHTML = "Current Network: "+ netname + "<br>" + myaccounts + "<br>ETH balance:" + ETHBalance + "<br>BAY Liquid:" + BAYLBal + "<br>BAY Reserve:" + BAYRBal + "<br>BAY Frozen:" + BAYFBal;
         }
     })
+    document.getElementById("networkinfo").innerHTML = "Current Total Network Supply: " + calculateSupply(networkvars[0],networkvars[4],networkvars[3]) + "% (" + networkvars[0] + " / " + (networkvars[1] * networkvars[2]) + ")<br>Peg compression(steps, microsteps): " + networkvars[1] + ", "+ networkvars[2] + "<br>Deflation rate and compound rate: (" + networkvars[4] + "% ^ " + (100 - networkvars[3]) + ")<br>Three way factor to BitBay's 1200 possible supplies: (" + networkvars[1] + " * " + networkvars[2] + " * " + (100 - networkvars[3]) + ")<br>Time delay for reserve payments(in seconds): " + reservetimelock;
+}
+
+function calculateSupply(supply, defrate, pegrate) {
+    perc = 100;
+    x = 0;
+    while(x < supply) {
+        perc = perc * ((deflationrate ** (100 - pegrate)) / (100 **  (100 - pegrate)));
+        x += 1;
+    }
+    return parseFloat(perc).toFixed(8);
 }
 
 async function showFrozen() {
@@ -105,9 +130,7 @@ async function showFrozen() {
     await baydatacontract.methods.getFrozen(myaccounts).call().then(function (myresult) {
         result = myresult;
     })
-    await baydatacontract.methods.getState().call().then(function (myresult2) {
-        result2 = myresult2;
-    })
+    result2 = networkvars;
     timestamps = [];
     amounts = [];
     x = 0;
@@ -147,9 +170,7 @@ async function showPegChart() {
     await baydatacontract.methods.calculateBalance(myaccounts,0).call().then(function (myresult) {
         result = myresult;
     })
-    await baydatacontract.methods.getState().call().then(function (myresult2) {
-        result2 = myresult2;
-    })
+    result2 = networkvars;
     x = 0;
     data = [];
     section = Math.floor(result2[0] / result2[2]);
