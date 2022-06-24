@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+<head></head>
 <body>
 <div id="Loaded"></div>
 <p id="text1"></p>
@@ -29,6 +30,9 @@ var contractInst = [];
 //web3[0] = new Web3("https://cloudflare-eth.com");
 //web3[1] = new Web3("https://bsc-dataseed.binance.org");
 var isConnected = false;
+window.addEventListener('ethereum#initialized', login, {
+    once: true,
+});
 async function login() {
     if (window.ethereum) {    
         console.log("connecting");
@@ -54,7 +58,6 @@ async function checkbalances() {
     if (!isConnected) {
         return;
     }
-    document.getElementById("text1").innerHTML = "checking balance..."    
     myaccounts = await web3.eth.getAccounts();
     if (myaccounts.length == 0) {
         document.getElementById("text1").innerHTML = "Please unlock Metamask so it can connect.";
