@@ -102,7 +102,7 @@ async function checkbalances() {
         BAYRaddy = "0xe491CC5b00e24fE53cCA89adaC79f5D7FdA80a82";
         BAYFaddy = "0x3c4Fa78cA311FF83A5EdF60140B0b45e8c39eBf9";
         BAYDataAddy = "0x7Be96cCeeB7D6488d1656DD43631a61e553a43E7";
-        BAYAdmin = "0xC2aDC15DAbb9D395700da75eA2CD7f7b912B8C35";
+        BAYAdmin = "0x839Ba2981f328958bf90A220C36d40842dd12ff7";
         pegsteps = 30;
         microsteps = 8;
         deflationrate = 99;
@@ -135,11 +135,11 @@ async function checkbalances() {
         document.getElementById("text1").innerHTML = "Current Network: "+ netname + "<br>" + myaccounts + "<br>ETH balance:" + ETHBalance + "<br>BAY Liquid:" + BAYLBal + "<br>BAY Reserve:" + BAYRBal + "<br>BAY Frozen:" + BAYFBal;
         }
     })
-    //await bayadmincontract.methods.isActive().call().then(function (isActive) { //May also check if automatic unfreeze and special transactions are enabled
-    //    if(isActive > 1) {
-    //        document.getElementById("text1").innerHTML += "<br>NOTICE: Spending is currently disabled as this contract may be under maintenance."
-    //    }
-    //})
+    await bayadmincontract.methods.isActive().call().then(function (isActive) { //May also check if automatic unfreeze and special transactions are enabled
+        if(isActive > 1) {
+            document.getElementById("text1").innerHTML += "<br>NOTICE: Spending is currently disabled as this contract may be under maintenance."
+        }
+    })
 }
 
 async function getNetworkInfo() {
@@ -362,8 +362,7 @@ async function burnToBitBay(amount) {
     if(found == 0) {
         return;
     }
-    console.log("FIRST")
-    myadmin = "0xC2aDC15DAbb9D395700da75eA2CD7f7b912B8C35";
+    myadmin = "0x839Ba2981f328958bf90A220C36d40842dd12ff7";
     //await baydatacontract.methods.minter().call().then(function (admin) {
     //    myadmin = admin;
     //})
