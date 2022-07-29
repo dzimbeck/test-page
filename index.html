@@ -292,6 +292,7 @@ currentChainId = '';
 prevChainId = 0;
 lastitem = 10000000;
 pairs = [];
+knowndecimals = [];
 routers = [];
 exchanges = [];
 exchangenum = [];
@@ -343,6 +344,7 @@ function defaultvars() {
     prevChainId = 0;
     lastitem = 10000000;
     pairs = [];
+    knowndecimals = [];
     routers = [];
     exchanges = [];
     exchangenum = [];
@@ -409,7 +411,6 @@ async function checkbalances() {
     var microsteps;
     var deflationrate;
     var compoundrate;
-    var reservetimelock;
     var netname = "unknown";
     if (currentChainId == 5) {
         netname = "Goerli Testnet";
@@ -423,7 +424,7 @@ async function checkbalances() {
         microsteps = 8;
         deflationrate = 99;
         compoundrate = 5;
-        reservetimelock = 120; //Testnet is actually 120 seconds but github reads 10 minutes
+        reservetimelock = 600; //Testnet is 10 minutes
     }    
     if (netname == "unknown") {
         document.getElementById("text1").innerHTML = "Unsupported network";
@@ -476,6 +477,7 @@ async function getNetworkInfo() {
 async function getMarketData(calcbal = 0) {
     if (prevChainId == 0) {
         pairs = [];
+        knowndecimals = [];
         routers = [];
         exchanges = [];
         exchangenum = [];
@@ -488,6 +490,7 @@ async function getMarketData(calcbal = 0) {
     var x;
     if(prevChainId != currentChainId) {
         pairs = [];
+        knowndecimals = [];
         routers = [];
         exchanges = [];
         exchangenum = [];
@@ -496,6 +499,8 @@ async function getMarketData(calcbal = 0) {
         if (currentChainId == 5) {        
             pairs.push({'HappyWalrusCoin': '0x1af76A71a15AB312DC58742bAA439c29190CF44F'});
             pairs.push({'Wrapped ETH': '0x95f23436b33916365E43BE2164B56c400104D711'});
+            knowndecimals.push(8);
+            knowndecimals.push(18);
             exchanges.push({'WalrusSwap': '0xc501f758B87c7e831C84229F95766341Ac32aBf7'});
             exchangenum.push(997)
             exchangeImages.push('<img src="./walrus.png" style="height: 75px; width: 75px;"/>');
@@ -527,11 +532,12 @@ async function getMarketData(calcbal = 0) {
     //console.log("Checking pool reserves...");
     var bayaddy = '';
     var coin1 = document.getElementById("Coin1").value;
+    var currentdecimals3 = 8;
+    currentdecimals3 = await getDecimals(coin1);
     coin1 = Object.values(pairs[coin1])[0];
     var exchange = document.getElementById("exchangeSelect").value;
     exchange = Object.values(exchanges[exchange])[0];
-    var bayselect = document.getElementById("Coin2").value;
-    var currentdecimals3 = 8;
+    var bayselect = document.getElementById("Coin2").value;   
     var totSupply = 0;
     var bayname = ''
     if(bayselect == 0) {
@@ -551,10 +557,6 @@ async function getMarketData(calcbal = 0) {
     await liquiditypool.methods.matchprecision().call().then(function (result3) {
         precision = parseInt(result3);
     })
-    var coin1contract = new web3.eth.Contract(ERC20ABI, coin1);
-    await coin1contract.methods.decimals().call().then(function (result3) {
-        currentdecimals3 = result3;
-    });
     var exchangecontract = new web3.eth.Contract(FactoryABI, exchange);
     await exchangecontract.methods.getPair(bayaddy, coin1).call().then(function (result3) {
         mycurrentpair = result3;
@@ -642,6 +644,20 @@ async function getMarketData(calcbal = 0) {
     }
 }
 
+async function getDecimals(myobj) {
+    if(knowndecimals.length != 0) {
+        if(knowndecimals.length - 1 <= parseFloat(myobj)) {
+            return knowndecimals[myobj];
+        }
+    }
+    var thiscontract = new web3.eth.Contract(ERC20ABI, Object.values(pairs[myobj])[0]);
+    var thedecimals = 0;
+    await thiscontract.methods.decimals().call().then(function (dresult) {
+        thedecimals = dresult;
+    });
+    return thedecimals;
+}
+
 async function CalculateBalance() {
     await getMarketData(1);
 }
@@ -670,6 +686,10 @@ async function calculateDeposit() {
     var mypair;
     try {
         var el=document.activeElement.id;
+        if(el == "CoinPercent") {
+            document.getElementById("SwapAmount").value = '';
+            document.getElementById("SwapAmount2").value = '';
+        }
         if(el == "Coin1amount" || el == "Coin2amount") {
             if(((lastchecked + 120) < (Math.floor(Date.now() / 1000))) && isConnected) {
                 await getNetworkInfo();
@@ -677,6 +697,7 @@ async function calculateDeposit() {
                 ak = parseInt(Math.floor(networkvars[0] % networkvars[2]));
                 bayaddy = '';
                 coin1 = document.getElementById("Coin1").value;
+                currentdecimals = await getDecimals(coin1);
                 coin1 = Object.values(pairs[coin1])[0];
                 exchange = document.getElementById("exchangeSelect").value;
                 exchange = Object.values(exchanges[exchange])[0];
@@ -694,10 +715,6 @@ async function calculateDeposit() {
                     resTolerance = parseInt(thisresult[5]);
                     enforcepoolratio = thisresult[6];
                 })
-                coin1contract = new web3.eth.Contract(ERC20ABI, coin1);
-                await coin1contract.methods.decimals().call().then(function (thisresult) {
-                    currentdecimals = thisresult;
-                });
                 exchangecontract = new web3.eth.Contract(FactoryABI, exchange);
                 mypair = '';
                 await exchangecontract.methods.getPair(bayaddy, coin1).call().then(function (thisresult) {
@@ -752,6 +769,7 @@ async function calculateDeposit() {
                 await getNetworkInfo();
                 bayaddy = '';
                 coin1 = document.getElementById("SwapCoin2").value;
+                currentdecimals2 = await getDecimals(coin1);
                 coin1 = Object.values(pairs[coin1])[0];
                 exchange = document.getElementById("exchangeSelect").value;
                 exchange = Object.values(exchanges[exchange])[0];
@@ -762,10 +780,6 @@ async function calculateDeposit() {
                 if(bayselect == 1 || bayselect == 3) {
                     bayaddy = BAYRaddy;
                 }
-                coin1contract = new web3.eth.Contract(ERC20ABI, coin1);
-                await coin1contract.methods.decimals().call().then(function (thisresult) {
-                    currentdecimals2 = thisresult;
-                });
                 exchangecontract = new web3.eth.Contract(FactoryABI, exchange);
                 mypair = '';
                 await exchangecontract.methods.getPair(bayaddy, coin1).call().then(function (thisresult) {
@@ -1095,12 +1109,14 @@ async function showFrozen() {
     await baydatacontract.methods.getFrozen(myaccounts).call().then(function (myresult) {
         result = myresult;
     })
-    result2 = networkvars;
+    var result2 = networkvars;
     var x = 0;
     var y = 0;    
     var ftext = "";
     var val2;
     var amt;
+    var myblock = await web3.eth.getBlock(await web3.eth.getBlockNumber());
+    var release;
     while(x < 4) {
         val2 = 0;
         await baydatacontract.methods.FrozenTXDBTimeSpent(myaccounts,x,0).call().then(function (newval) {
@@ -1111,11 +1127,16 @@ async function showFrozen() {
                 y = 0;
                 amt = 0;
                 //If you want you can calculate both liquid and reserve for each payment if you follow the release frozen calculation protocol
-                while(y < result2[0]) {
+                while(y < result2[1]) {
                     amt += parseInt(result[x][y]);
                     y += 1;
                 }
-                ftext += "Amount: " + parseFloat((amt / 1e8).toFixed(8)) + "<br>" + "Timestamp to release funds: " + newval + "<br>";
+                if(myblock.timestamp > parseInt(newval) + reservetimelock) {
+                    release = "(currently available)";
+                } else {
+                    release = "(available in " + parseFloat(((((parseInt(newval) + reservetimelock) - parseInt(myblock.timestamp)) / 60) / 60).toFixed(2)) + " hours)";
+                }
+                ftext += "Amount: " + parseFloat((amt / 1e8).toFixed(8)) + "<br>" + "Timestamp to release funds: " + newval + release + "<br>";
             });
         }
         x += 1;
@@ -1468,6 +1489,7 @@ async function addLiquidity() {
     var currentaccount = myaccounts;
     var coin1 = document.getElementById("Coin1").value;
     var exchange = document.getElementById("exchangeSelect").value;
+    var mycoin1 = coin1;
     coin1 = Object.values(pairs[coin1])[0];    
     exchange = Object.values(exchanges[exchange])[0];
     var myrouter = Object.values(routers[0])[0];
@@ -1553,9 +1575,8 @@ async function addLiquidity() {
         document.getElementById("addliquidtext").innerHTML = 'Percentage incorrect, usually 1-5% is recommended';
         return;
     }
-    await coin1contract.methods.decimals().call().then(function (liqresult) {
-        mydecimals = "1e" + liqresult;
-    });
+    mydecimals = await getDecimals(mycoin1);
+    mydecimals = "1e" + mydecimals;
     coin1val = parseInt((coin1val * mydecimals).toFixed(0));
     coin2val = parseInt((web3.utils.toWei(coin2val,'gwei')/10).toFixed(0));
     otherval = 0;
@@ -1636,6 +1657,7 @@ async function Swap() {
     var chosenaccount = myaccounts;
     var prevtext = document.getElementById("SwapSummary").innerHTML;
     var coin1 = document.getElementById("SwapCoin2").value;
+    var mycoin1 = coin1;
     coin1 = Object.values(pairs[coin1])[0];
     var exchange = document.getElementById("exchangeSelect").value;
     exchange = Object.values(exchanges[exchange])[0];
@@ -1660,9 +1682,8 @@ async function Swap() {
     await exchangecontract.methods.getPair(bayaddy, coin1).call().then(function (swapresult) {
         mypair = swapresult;
     });
-    await coin1contract.methods.decimals().call().then(function (swapresult) {
-        decimals = "1e" + swapresult;
-    });
+    decimals = await getDecimals(mycoin1);
+    decimals = "1e" + decimals;
     try {
         await coin1contract.methods.allowance(chosenaccount, myrouter).call().then(function (swapresult) {
             allowance = swapresult;
@@ -1724,8 +1745,8 @@ async function Swap() {
         document.getElementById("SwapSummary").innerHTML = 'Percentage incorrect, usually 1-10% is recommended';
         return;
     }    
-    org1 = parseInt((swapval * 1e8).toFixed(0));
-    org2 = parseInt((swapval * decimals).toFixed(0));
+    org1 = parseInt((org1 * 1e8).toFixed(0));
+    org2 = parseInt((org2 * decimals).toFixed(0));
     if(bayselect == 0 || bayselect == 1) {
         await coin1contract.methods.balanceOf(chosenaccount).call().then(function (myliquid2) {
             if(org2 > myliquid2) {
@@ -1801,6 +1822,7 @@ async function Swap() {
     } catch (e) {
         console.log(e);
         document.getElementById("SwapSummary").innerHTML = 'Swap failed';
+        return;
     }
     document.getElementById("SwapSummary").innerHTML = 'Success!<br><br>' + prevtext;
 }
