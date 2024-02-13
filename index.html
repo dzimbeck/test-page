@@ -6,23 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
   <title>BitBay Swap</title>
   <link rel="icon" type="image/x-icon" href="./favicon.ico">
-
-  
-
-
-  <link href="https://fonts.googleapis.com/css?family=Lato:400,700&display=swap" rel="stylesheet">
-  
-
-  
   <link rel="stylesheet" type="text/css" href="./assets/css/chartist.min.css">
   <link rel="stylesheet" href="./assets/css/nouislider.min.css">
-<link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+  <link rel="stylesheet" href="./assets/css/line.css">
   <link rel="stylesheet" href="./assets/css/style.css">
-  
-  <!-- <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1462889/unicons.css"> -->
-  
-  
-
 </head>
 
 <body>
@@ -88,7 +75,7 @@
         <div class="select-menu" id="swap_network">
           <div class="select-btn">
               <span class="sBtn-text">
-                <span class="btn swapSelector"><i class="icon uil uil-globe"></i> Network <i class="icon arrow uil uil-arrow-down"></i></span></span>
+                <span class="btn swapSelector"><img class="icon uil uil-globe" src="./assets/images/network.svg"> Network <img class="icon uil uil-arrow-down" src="./assets/images/arrow-down.svg"></span></span>
               <i class="bx bx-chevron-down"></i>
           </div>
  
@@ -101,16 +88,13 @@
           </ul>
       </div>
 
-
-
-
       </div>
       <div class="top_menu_content_right">
         
         <div class="sec-center">  
               <!-- <button>?</button> !-->
               <input class="dropdown" type="checkbox" id="dropdown" name="dropdown"/>
-              <label class="for-dropdown" for="dropdown">Menu <i class="uil uil-arrow-down"></i></label>
+              <label class="for-dropdown" for="dropdown">Menu <img class="icon uil uil-arrow-down" src="./assets/images/arrow-down.svg"></label>
             <div class="section-dropdown"> 
               <a href="./information.html">FAQ about the Bridge <i class="uil uil-arrow-right"></i></a>
               <a href="https://www.bitbay.market" target="_blank">Learn more about BitBay <i class="uil uil-arrow-right"></i></a>
@@ -129,7 +113,6 @@
       </div>
   </div>
 
-
   <!--PEN HEADER-->
   <div class="header">
     <img src="assets/images/bitbay-logo-medium.png" class="main_logo">
@@ -141,12 +124,11 @@
       <!-- <button onclick="login()" class="not-logged-in login_btn"><i class="uil uil-link"></i> Connect Wallet</button> -->
       
       <div class=" swapSelector btn not-logged-in login_btn" onclick="login()">
-            <i class="swapSelectorLogo uil uil-link"></i>
+            <img class="swapSelectorLogo uil uil-link" src="./assets/images/link.svg">
             <div class="swapSelectorText">Connect Wallet</div>
       </div>
 
     </h2>
-
  
     <div class="box">
       <div class="callout callout-success logged-in hidden" id="balance_network">
@@ -170,10 +152,8 @@
     <!--content inner-->
     <div class="content__inner">
 
-
       <!-- tabs-content !-->
       <div class="tabs">
-
 
         <!-- trade settings button -->
 
@@ -191,27 +171,20 @@
                   
                 </div>
 
-
         <!--tabs panels-->
         <div class="tabs__panels">
           <!--info panel-->
-          <div class="tabs__panel info_panel">
+          <div class="tabs__panel info_panel">   
 
-            
-
-
-            
-            
             <div class="callout callout-no-border logged-in hidden">
               Contract info:<hr>
               <div id="contractinfo">
               </div>
             </div>
 
-
 <hr class="logged-in hidden">
-            <div class="swapBody">
-  <div class="swapFields">
+    <div class="swapBody">
+      <div class="swapFields">
         <div class="boxTitle ">
           <i class="icon uil uil uil-snowflake"></i> Frozen Coins
         </div>
@@ -250,29 +223,14 @@
 
         </div>
       </div>
-      
-      
-
-
-      
-
-
-
-</div>
-
+    </div>
             <br><hr class="logged-in hidden">
-
             <br>
-            
-            
-            
-
             <div class="callout callout-success logged-in hidden">
               Network info:<hr>
               <div id="networkinfo">
               </div>
             </div>
-            
 
           </div>
           <!--swap panel-->
@@ -288,15 +246,10 @@
 
             <br>
             
-
-
             <!-- /*swap interface - start*/ -->
-
             
             <select id="exchangeSelect" class="logged-in hidden">
             </select>
-            
-
 
 <div class="swapBody">
   <div class="swapFields">
@@ -324,7 +277,7 @@
         </div>
         <div class="swapField">
           <div class="swapSecondCoin swapSelector btn">
-            <img class="swapSelectorLogo" src="https://assets.coingecko.com/coins/images/11035/thumb/0xmnr.PNG?1587357680">
+            <img class="swapSelectorLogo" src="./assets/images/0xmnr.png">
             <div class="swapSelectorText" id="swapCoin2Text">WALLY</div>
             <div class="swapSelectorArrow">
               <svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg" class="sc-33m4yg-8 khlnVY"><path d="M0.97168 1L6.20532 6L11.439 1" stroke="#AEAEAE"></path></svg>
@@ -347,50 +300,28 @@
 
           <div id="SwapSummary">
           
-
         </div>
-
-          
 
         </div>
 
       </div>
 
-
       <a href="#" class="swapButton logged-in hidden" onclick="Swap()">Swap </a>
 
-
-
 </div>
-
-
-
-
-            <!-- 
-
+            <!--
 /*swap interface - end*/
-
-
             -->
-            
-            
-            
+
             <select id="SwapCoin" >
               <option value="0">Buy BitBay</option>
               <option value="1">Buy BitBay Reserve</option>
               <option value="2">Sell BitBay</option>
               <option value="3">Sell BitBay Reserve</option>
             </select>
-
             <br>
-            
-            
-              
             <br>
-            
-
           </div>
-          
 
           <!--liquidity panel-->
           <div class="tabs__panel liquidity_panel">
@@ -435,20 +366,9 @@
                       <div id="additionalCoins"></div>
                     </div>
                   </div>
-
-
                 </div>
-                
-
-                
-
               </div>
             </div>
-
-            
-            
-
-            
             <br>
             
             <div class="boxTitle swapFirstCoinTxt">
@@ -456,7 +376,6 @@
             </div>
 
 <div class="swapField swapFlexColumn withdraw">
-          
           <div class="swapField-child swapFlexRow">
             <div class="swapFirstCoin swapSelector btn" onclick="CalculateBalance()">
               <i class="uil uil-user-plus"></i>
@@ -479,27 +398,12 @@
           </div>
 
         </div>
-
-
-
-
-        
-
-
-
-
-
             <br><br>
-            
-
             <div class="callout callout-success logged-in">
               Pool Liquidity details:<hr>
               <div id="LPdetails2"></div>
-            </div>
-
-            
+            </div>            
             <br>
-
             <!-- Liquidity charts -->
             <div class="swapBody">
             <div class="swapFields">
@@ -507,9 +411,7 @@
                 <i class="uil uil-chart"></i> Show Liquid/Reserve Chart
               </div>
             </div>
-
-            <div class="swapField info_chart">
-          
+            <div class="swapField info_chart">          
               <span class="btn swapSelector" onclick="showPegChart(9)" id="showPegChartLiquidity">Show Liquid/Reserve Chart <i class="uil uil-angle-right-b"></i></span>
               <br>
               <div class="chart_inputs hidden" id="chartContainer2Inputs">
@@ -521,7 +423,6 @@
                   </div>
                 </div>
               </div>
-
               <br>
               <select id="ChartSelect">
               <option value="0">Show chart for selected pair</option>
@@ -529,17 +430,13 @@
               </select>
               <br>
               <div id="chartContainer2" class=" hidden" style="height: 150px; border: 5px solid #d9dbda; border-radius: 10px"></div>
-
         </div>
       </div>
-            
             <br>
-
           </div>
 
           <!--bridge panel-->
           <div class="tabs__panel">
-            
 
             <div class="swapBody">
   <div class="swapFields">
@@ -555,8 +452,6 @@
           </div>
           <input class="swapTextInput" type="text" placeholder="0.0" id="jsonproof" required>
         </div>
-
-        
 
         <div class="boxTitle swapSecondCoinTxt">
           Register BitBay address for burn(bridge)
@@ -586,7 +481,6 @@
             <input class="swapTextInput" type="text" placeholder="0.0" id="myBAYamount" required>
           </div>
 
-
           <div class="swapField-child">
             <div class="switch-field">
               <input type="radio" id="radio-burn-reserve" name="burn-liquid-reserve" value="Reserve Coins" checked/>
@@ -596,15 +490,12 @@
             </div>
           </div>
 
-          
-          
-          
         </div>
 
-  <select id="coinToBurn" class="hidden">
+          <select id="coinToBurn" class="hidden">
             <option>Reserve Coins</option>
             <option>Liquid Coins</option>
-            </select>
+          </select>
 
         <br>
         <hr>
@@ -618,27 +509,12 @@
                 <div id="merkleintro" class="swapSelector btn btn btn-inside btn-inside-start" onclick="showNonces()"><i class="uil uil-receipt-alt"></i> Show next receipt</div>
                 <button type="button" class="swapSelector btn btn-inside" onclick="copyNonce()"><i class="uil uil-copy"></i> copy</button>
             </div>
-            
-
             <div id="merkletext" class="swapField-child callout hidden">
             </div>
-
         </div>
-
-        
-
-
     </div>
-
-
-
-
 </div>
-
-
           </div>
-
-
         </div>
         <div class="tabs tabs_overlay logged-in logged-in-remove hidden">
           
@@ -652,12 +528,7 @@
   </div>
   <!-- partial -->
 
-
-
-  
 </div>
-
-
 
 <!-- MODALS -->
 
@@ -736,7 +607,6 @@
 </div>
 <!-- /.modal -->
 
-
 <!-- Swap in exchange for Select -->
 <div id="modal-swap-inexchange-for" class="modal fade" tabindex="-1" role="dialog">
  <div class="modal-dialog modal-dialog-small">
@@ -774,14 +644,9 @@
 </div>
 <!-- /.modal -->
 
-
-
 <!-- scripts -->
 <script type="text/javascript" src="./assets/js/nouislider.min.js"></script>
 <script type="text/javascript" src="./assets/js/kane-modal.js"></script>
-
-
-
 
 <script type="text/javascript" src="./assets/js/script.js"></script>
 <script type="text/javascript" src="./assets/js/bridge-tools/web3.min.js"></script>
