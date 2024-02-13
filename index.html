@@ -1110,12 +1110,12 @@ async function checkbalances() {
     if (currentChainId == 5) {
         netname = "Goerli Testnet";
         netname2 = "ETH";
-        BAYLaddy = "0x117b706aD64E9224e6cE4F8ef2cDF809b9575c10";
-        BAYRaddy = "0x790E1526014C5c32c1D06C528EbC070041c658B5";
-        BAYFaddy = "0xFd7702DD20908755276CC537d0a2687582e128E4";
-        BAYDataAddy = "0x8F093DBB0b56d99abBCD6fc8d283262641e12cA0";
-        BAYAdmin = "0x147807DF5b1Ff47E6Ea09F2B0322E1bf52d79Cae";
-        liquidityAddy = "0x52257C92487d76345C0969519746a2713B701e96";
+        BAYLaddy = "0x77f68054B5395d56A0BF4f0C207b839e2f956AFb";
+        BAYRaddy = "0x24086f815b48Cfb78b879Fa184Cb6F2434108B19";
+        BAYFaddy = "0xc1911aB4DEAAF12494504c9e1462051feF1c2993";
+        BAYDataAddy = "0xE0e7A345D509Cb2CA4fF06802A1dedF689d1d1C1";
+        BAYAdmin = "0x7945CB7aaa3af85F5f43b3569a0BC8C4547bA6e6";
+        liquidityAddy = "0x1e691D30a47F5022b43f1864A4C4316f05711D34";
         pegsteps = 30;
         microsteps = 8;
         deflationrate = 99;
@@ -1198,13 +1198,13 @@ async function getMarketData(calcbal = 0) {
         prevChainId = currentChainId;
         if (currentChainId == 5) {        
             pairs.push({'HappyWalrusCoin': '0xb3460166784fd07A022E51547379352De4E98dF5'});
-            pairs.push({'Wrapped ETH': '0xCC23B64B67c242D0bA9Ff8D999065Cd32b8387b2'});
+            pairs.push({'Wrapped ETH': '0xdfFd57fa61eC2ad0fa260Fa8368ff7F2EEF4407E'});
             knowndecimals.push(8);
             knowndecimals.push(18);
-            exchanges.push({'WalrusSwap': '0xc501f758B87c7e831C84229F95766341Ac32aBf7'});
+            exchanges.push({'WalrusSwap': '0xC1d1274dc5Ccfecc1ed87e24648833B919b72203'});
             exchangenum.push(997)
             exchangeImages.push('<img src="./walrus.png" style="height: 75px; width: 75px;"/>');
-            routers.push({'UniversalRouter': '0x981C5963529FB555414286a042E2D3E9412b0987'});
+            routers.push({'UniversalRouter': '0xeFE0a152ef2F095335EeAF6981a99dAaF37E8e2A'});
         }
         document.getElementById("exchangeImage").innerHTML="";
         document.getElementById("Coin1").innerHTML="";
