@@ -8,7 +8,7 @@
   <link rel="icon" type="image/x-icon" href="./favicon.ico">
   <link rel="stylesheet" type="text/css" href="./assets/css/chartist.min.css">
   <link rel="stylesheet" href="./assets/css/nouislider.min.css">
-  <link rel="stylesheet" href="./assets/css/line.css">
+  <!-- <link rel="stylesheet" href="./assets/css/line.css"> -->
   <link rel="stylesheet" href="./assets/css/style.css">
 </head>
 
@@ -75,7 +75,7 @@
         <div class="select-menu" id="swap_network">
           <div class="select-btn">
               <span class="sBtn-text">
-                <span class="btn swapSelector"><img class="icon uil uil-globe" src="./assets/images/network.svg"> Network <img class="icon uil uil-arrow-down" src="./assets/images/arrow-down.svg"></span></span>
+                <span class="btn swapSelector"><img class="icon network" src="./assets/images/network.svg"> Network <img class="icon uil uil-arrow-down" src="./assets/images/arrow-down.svg"></span></span>
               <i class="bx bx-chevron-down"></i>
           </div>
  
@@ -96,16 +96,16 @@
               <input class="dropdown" type="checkbox" id="dropdown" name="dropdown"/>
               <label class="for-dropdown" for="dropdown">Menu <img class="icon uil uil-arrow-down" src="./assets/images/arrow-down.svg"></label>
             <div class="section-dropdown"> 
-              <a href="./information.html">FAQ about the Bridge <i class="uil uil-arrow-right"></i></a>
-              <a href="https://www.bitbay.market" target="_blank">Learn more about BitBay <i class="uil uil-arrow-right"></i></a>
-              <a href="https://github.com/dzimbeck/BitBay-Solidity" target="_blank">Open source code on Github <i class="uil uil-arrow-right"></i></a>
+              <a href="./information.html">FAQ about the Bridge</a>
+              <a href="https://www.bitbay.market" target="_blank">Learn more about BitBay</a>
+              <a href="https://github.com/dzimbeck/BitBay-Solidity" target="_blank">Open source code on Github</a>
 
 
               <input class="dropdown-sub" type="checkbox" id="dropdown-sub" name="dropdown-sub"/>
-              <label class="for-dropdown-sub" for="dropdown-sub">Help <i class="uil uil-plus"></i></label>
+              <label class="for-dropdown-sub" for="dropdown-sub">Help →</label>
               <div class="section-dropdown-sub"> 
-                <a href="https://t.me/bitbayofficial" target="_blank">BitBay Telegram <i class="uil uil-arrow-right"></i></a>
-                <a href="https://nighttrader.exchange/" target="_blank">NightTrader Exchange<i class="uil uil-arrow-right"></i></a>
+                <a href="https://t.me/bitbayofficial" target="_blank">BitBay Telegram</a>
+                <a href="https://nighttrader.exchange/" target="_blank">NightTrader Exchange</a>
               </div>
             </div>
         </div>
@@ -186,7 +186,7 @@
     <div class="swapBody">
       <div class="swapFields">
         <div class="boxTitle ">
-          <i class="icon uil uil uil-snowflake"></i> Frozen Coins
+          ❄️ Frozen Coins
         </div>
 
         <div class="swapField">
@@ -205,11 +205,11 @@
     
         <br>
         <div class="boxTitle ">
-          <i class="uil uil-chart"></i> Show Liquid/Reserve Chart
+          📊 Show Liquid/Reserve Chart
         </div>
         <div class="swapField info_chart">
           
-          <span class="btn swapSelector" onclick="showPegChart()" id="showPegChart">Show Liquid/Reserve Chart <i class="uil uil-angle-right-b"></i></span><br>
+          <span class="btn swapSelector" onclick="showPegChart()" id="showPegChart">Show Liquid/Reserve Chart 📊</span><br>
             <div class="chart_inputs  hidden" id="chartContainerInputs">
               <div class="chart-slider-container">
                 <div class="style-2 wrapper m-b-50 p-l-r">
@@ -378,7 +378,7 @@
 <div class="swapField swapFlexColumn withdraw">
           <div class="swapField-child swapFlexRow">
             <div class="swapFirstCoin swapSelector btn" onclick="CalculateBalance()">
-              <i class="uil uil-user-plus"></i>
+              Σ
               <div class="swapSelectorText">Calculate Balance</div>
 
             </div>
@@ -387,7 +387,7 @@
 
           <div class="swapFlexColumn">
             
-            <div class="swapSelector swapFlexRow center btn" onclick="withdrawLP()"><i class="uil uil-money-withdrawal"></i> Withdraw LP tokens/coins</div>
+            <div class="swapSelector swapFlexRow center btn" onclick="withdrawLP()">💸 Withdraw LP tokens/coins</div>
           </div>
 
           <div class="swapFlexColumn">
@@ -408,11 +408,11 @@
             <div class="swapBody">
             <div class="swapFields">
               <div class="boxTitle ">
-                <i class="uil uil-chart"></i> Show Liquid/Reserve Chart
+                📊 Show Liquid/Reserve Chart
               </div>
             </div>
             <div class="swapField info_chart">          
-              <span class="btn swapSelector" onclick="showPegChart(9)" id="showPegChartLiquidity">Show Liquid/Reserve Chart <i class="uil uil-angle-right-b"></i></span>
+              <span class="btn swapSelector" onclick="showPegChart(9)" id="showPegChartLiquidity">Show Liquid/Reserve Chart 📊</span>
               <br>
               <div class="chart_inputs hidden" id="chartContainer2Inputs">
                 <div class="chart-slider-container">
@@ -450,7 +450,7 @@
             <div class="swapSelectorText">Mint</div>
 
           </div>
-          <input class="swapTextInput" type="text" placeholder="0.0" id="jsonproof" required>
+          <input class="swapTextInput" type="text" placeholder="Merkle proof receipt" id="jsonproof" required>
         </div>
 
         <div class="boxTitle swapSecondCoinTxt">
@@ -458,11 +458,11 @@
         </div>
         <div class="swapField">
           <div class="swapSecondCoin swapSelector btn" onclick="registerBitBay(document.getElementById('myBAYaddy').value)">
-            <i class="uil uil-user-plus"></i>
+            👨
             <div class="swapSelectorText">Register</div>
 
           </div>
-          <input class="swapTextInput" type="text" placeholder="0.0" id="myBAYaddy" required>
+          <input class="swapTextInput" type="text" placeholder="BitBay Address" id="myBAYaddy" required>
         </div>
 
         <div class="boxTitle swapSecondCoinTxt">
@@ -471,7 +471,7 @@
         <div class="swapField bridgeBurn">
           <div class="swapField-child">
             <div class="swapSecondCoin swapSelector btn" onclick="burnToBitBay(document.getElementById('myBAYamount').value)">
-              <i class="uil uil-fire"></i>
+              🔥
               <div class="swapSelectorText">Burn</div>
 
             </div>
@@ -506,8 +506,8 @@
 
           <div class="input-group">
                 
-                <div id="merkleintro" class="swapSelector btn btn btn-inside btn-inside-start" onclick="showNonces()"><i class="uil uil-receipt-alt"></i> Show next receipt</div>
-                <button type="button" class="swapSelector btn btn-inside" onclick="copyNonce()"><i class="uil uil-copy"></i> copy</button>
+                <div id="merkleintro" class="swapSelector btn btn btn-inside btn-inside-start" onclick="showNonces()">→ Show next receipt</div>
+                <button type="button" class="swapSelector btn btn-inside" onclick="copyNonce()">📄 Copy</button>
             </div>
             <div id="merkletext" class="swapField-child callout hidden">
             </div>
@@ -669,12 +669,69 @@
 <script type="text/javascript" src="./assets/js/bridge-tools/chartist.js"></script>
 <script type="text/javascript" src="./assets/js/bridge-tools/chartist-plugin-tooltip.js"></script>
 <script type="text/javascript" src="./assets/js/bridge-tools/purify.js"></script>
+<script type="text/javascript" src="./assets/js/bridge-tools/sweetalert211.js"></script>
+
+<style>
+    .swal2-popup {
+      background-color: #ededed; /* Background color */
+      color: #000000; /* Text color */
+      border: 2px solid #3d0064; /* Border color */
+      border-radius: 4px; /* Border radius */
+      font-size: 11px;
+      font-family: 'Courier New', monospace; /* Custom font */
+      font-weight: normal;
+      z-index: 1000;
+    }
+    .swal2-title {
+      color: #3d0064; /* Title text color */
+    }
+    .swal2-content {
+      color: #3d0064; /* Content text color */
+    }
+    .swal2-confirm,
+    .swal2-cancel {
+      background-color: #ededed; /* Confirm and cancel button background color */
+      color: #3d0064; /* Button text color */
+    }
+    /* Hover effect for buttons */
+    .swal2-confirm:hover,
+    .swal2-cancel:hover {
+      background-color: #0086e3;
+    }
+    /* Icon color */
+    .swal2-icon {
+      color: #3d0064;
+    }
+    .swal2-range {
+      background-color: #ededed; /* Set your desired background color */
+      border: 2px solid #3d0064;
+    }
+</style>
+
 <script type="text/javascript">
+
 //For further security improvements to these tools it's possible to add a
 //section which allows a custom approval where users can set manually or
 //possibly have a dialog box move into focus when asked for the authorization
 //which lets them specify the amount. Also in the security tab advise users
 //on how to run the page locally.
+
+function getQueryParam(name) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(name);
+}
+
+    // Detect language
+var merkleProof = getQueryParam('m') || '';  // Default to 'en' if not provided
+if(merkleProof != '') {
+  document.getElementById("jsonproof").value = merkleProof;
+  Swal.fire({
+    icon: 'success',
+    title: 'Receipt pending',
+    text: 'The site has detected a merkle proof in the URL. The text was filled into the minting form. Once logged in, you can attempt to redeem it by clicking "Mint".',
+  });
+}
+
 
 var web3 = [];
 var contractInst = [];

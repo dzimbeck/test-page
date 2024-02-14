@@ -1,2 +1,2 @@
-# BitBay-Bridge
-BitBay-Bridge for Swapping from Mainnet to Tokens and vice versa
+# BitBay Bridge
+BitBay decentralized bridge for moving coins from Mainnet to solidity based networks and vice versa. This bridge also is able to interact with popular AMM exchanges even though it's supply is dynamic. It uses various techniques to detect how a user is interacting with the AMM and a custom router. This helps BitBay have access to decentralized exchanages and smart contracts on solidity. This code is open source and may be run natively from the desktop by running pythonserver.bat with the latest version of python installed so the page may run locally.
