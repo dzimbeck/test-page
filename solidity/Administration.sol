@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: Jelurida Public License
 pragma solidity = 0.8.4;
 
 interface IAdministration {
@@ -72,7 +72,7 @@ contract Administration is IAdministration {
         totalvotes += 100;
         voteperc = 55; //55 percent consensus
         uint x = 0;
-        while(x < 12) {
+        while(x < 14) {
             votetimelimit[x] = 300;
             x += 1;
         }

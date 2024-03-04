@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: Jelurida Public License
 pragma solidity = 0.8.4;
 
 //WARNING: Do not assume this coin will operate the same with most standard contracts!
