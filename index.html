@@ -32,7 +32,7 @@
           <ul class="options">
               <li class="option">
                   <i class="bx bxl-github" style="color: #171515;"></i>
-                  <span class="option-text">Ethereum (Goerli Testnet)</span>
+                  <span class="option-text">Ethereum (Sepolia Testnet)</span>
               </li>
               
           </ul>
@@ -82,7 +82,7 @@
           <ul class="options">
               <li class="option">
                   <i class="bx bxl-github" style="color: #171515;"></i>
-                  <span class="option-text">Ethereum (Goerli Testnet)</span>
+                  <span class="option-text">Ethereum (Sepolia Testnet)</span>
               </li>
               
           </ul>
@@ -1029,15 +1029,15 @@ async function checkbalances() {
     var compoundrate;
     var netname = "unknown";
     var netname2 = "ETH";
-    if (currentChainId == 5) {
-        netname = "Goerli Testnet";
+    if (currentChainId == "11155111") {
+        netname = "Sepolia Testnet";
         netname2 = "ETH";
-        BAYLaddy = "0x77f68054B5395d56A0BF4f0C207b839e2f956AFb";
-        BAYRaddy = "0x24086f815b48Cfb78b879Fa184Cb6F2434108B19";
-        BAYFaddy = "0xc1911aB4DEAAF12494504c9e1462051feF1c2993";
-        BAYDataAddy = "0xE0e7A345D509Cb2CA4fF06802A1dedF689d1d1C1";
-        BAYAdmin = "0x7945CB7aaa3af85F5f43b3569a0BC8C4547bA6e6";
-        liquidityAddy = "0x1e691D30a47F5022b43f1864A4C4316f05711D34";
+        BAYLaddy = "0x4b248a1C2518D1b8a2CeCc1b115967b3e3b722b0";
+        BAYRaddy = "0x8FbEcE947CFcba996C6F3fE70B327e0e50D9E196";
+        BAYFaddy = "0xc8e5dA4bF149fafde3Eb4032B78d4eA672Eb7bb1";
+        BAYDataAddy = "0x871f3B8Af33135A8189e7bB85304001d6F3eC04D";
+        BAYAdmin = "0x06bf4B8ee45671ab48292425118dC6a9981993dE";
+        liquidityAddy = "0x8e54d9150A970C8E8CB232513263D588fc382DD4";
         pegsteps = 30;
         microsteps = 8;
         deflationrate = 99;
@@ -1118,15 +1118,15 @@ async function getMarketData(calcbal = 0) {
         exchangenum = [];
         exchangeImages = [];
         prevChainId = currentChainId;
-        if (currentChainId == 5) {        
-            pairs.push({'HappyWalrusCoin': '0xb3460166784fd07A022E51547379352De4E98dF5'});
-            pairs.push({'Wrapped ETH': '0xdfFd57fa61eC2ad0fa260Fa8368ff7F2EEF4407E'});
+        if (currentChainId == "11155111") {
+            pairs.push({'HappyWalrusCoin': '0xf7F8aB76E62983ec12D97fD026Ab11296EdB2e23'});
+            pairs.push({'Wrapped ETH': '0x15F6dD401774441D161D1722aF9e975F60A3cb7b'});
             knowndecimals.push(8);
             knowndecimals.push(18);
-            exchanges.push({'WalrusSwap': '0xC1d1274dc5Ccfecc1ed87e24648833B919b72203'});
+            exchanges.push({'WalrusSwap': '0xf99eaeEF749F99F826bF3c1150fCD64a0d0CE6EA'});
             exchangenum.push(997)
             exchangeImages.push('<img src="./walrus.png" style="height: 75px; width: 75px;"/>');
-            routers.push({'UniversalRouter': '0xeFE0a152ef2F095335EeAF6981a99dAaF37E8e2A'});
+            routers.push({'UniversalRouter': '0x65252D811F01B14F631B784B5b04b55AC510fd16'});
         }
         document.getElementById("exchangeImage").innerHTML="";
         document.getElementById("Coin1").innerHTML="";
