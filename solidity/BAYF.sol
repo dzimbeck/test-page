@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Jelurida Public License
+// SPDX-License-Identifier: Coinleft Public License for BitBay
 pragma solidity = 0.8.4;
 
 //WARNING: Do not assume this coin will operate the same with most standard contracts!

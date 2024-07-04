@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Jelurida Public License
+// SPDX-License-Identifier: Coinleft Public License for BitBay
 pragma solidity = 0.8.4; //Required to hand memory safe decoding of arrays
 
 interface ILiquidityPool {
