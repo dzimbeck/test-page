@@ -1032,12 +1032,12 @@ async function checkbalances() {
     if (currentChainId == "11155111") {
         netname = "Sepolia Testnet";
         netname2 = "ETH";
-        BAYLaddy = "0x4b248a1C2518D1b8a2CeCc1b115967b3e3b722b0";
-        BAYRaddy = "0x8FbEcE947CFcba996C6F3fE70B327e0e50D9E196";
-        BAYFaddy = "0xc8e5dA4bF149fafde3Eb4032B78d4eA672Eb7bb1";
-        BAYDataAddy = "0x871f3B8Af33135A8189e7bB85304001d6F3eC04D";
-        BAYAdmin = "0x06bf4B8ee45671ab48292425118dC6a9981993dE";
-        liquidityAddy = "0x8e54d9150A970C8E8CB232513263D588fc382DD4";
+        BAYLaddy = "0x009A9691B789b3E3082f727CD32130E1fdEEb618";
+        BAYRaddy = "0xf604023990b3f9b865692D6f2877d4d0B92828A5";
+        BAYFaddy = "0x1285c146B0F38fe745A76B3966e38439d963e0f6";
+        BAYDataAddy = "0xbfd49f391E109A5A528F6a654A0cB8e8cBA597D4";
+        BAYAdmin = "0x6792F14fAD6bd4179f8E34Af9B786C577b83e15B";
+        liquidityAddy = "0x1C142996D978C6381744e26516c65D3C09c87a5D";
         pegsteps = 30;
         microsteps = 8;
         deflationrate = 99;
@@ -1126,7 +1126,7 @@ async function getMarketData(calcbal = 0) {
             exchanges.push({'WalrusSwap': '0xf99eaeEF749F99F826bF3c1150fCD64a0d0CE6EA'});
             exchangenum.push(997)
             exchangeImages.push('<img src="./walrus.png" style="height: 75px; width: 75px;"/>');
-            routers.push({'UniversalRouter': '0x65252D811F01B14F631B784B5b04b55AC510fd16'});
+            routers.push({'UniversalRouter': '0xfe8f06a4435551c1ab93af0B12D12f4873114a09'});
         }
         document.getElementById("exchangeImage").innerHTML="";
         document.getElementById("Coin1").innerHTML="";
@@ -1958,11 +1958,11 @@ async function registerBitBay(regaddy) {
         return;
     }
     lastrun = (Math.floor(Date.now() / 1000)) + 7;
-    if(regaddy[0] != 'b' && regaddy[0] != "B") {
+    //if(regaddy[0] != 'b' && regaddy[0] != "B") {
         //document.getElementById("text1").innerHTML += "<br><br>Invalid BitBay address.";
-        modalDialog('Connect', "Invalid BitBay address.", "danger");
-        return;
-    }
+    //    modalDialog('Connect', "Invalid BitBay address.", "danger");
+    //    return;
+    //}
     if(coinjs.addressDecode(regaddy) == false) {
         //document.getElementById("text1").innerHTML += "<br><br>Invalid BitBay address.";
         modalDialog('Connect', "Invalid BitBay address.", "danger");
