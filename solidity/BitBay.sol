@@ -18,7 +18,6 @@ interface IMinter {
 
 contract BITBAY {
     string public constant name = "BitBay Data";
-    string public version = "1";
     uint public totalSupply;
     
     address public minter;
@@ -39,14 +38,14 @@ contract BITBAY {
     uint frozenslots = 4; //amount of concurrent frozen TX allowed
     
     //User balances are actually arrays, include peg steps here and in constructor
-    mapping (address => uint[38]) public Rbalances; //Steps + microsteps
+    mapping (address => uint64[38]) public Rbalances; //Steps + microsteps
     
     mapping (address => uint) public highkey; //microshard section since last update
     mapping (address => mapping (address => uint)) private allowed;
     mapping (address => mapping (address => uint)) private allowedReserve;
     
     address[] public proxyContracts; //The tokens and other internal contracts
-    mapping (address => bool) public isProxy;    
+    mapping (address => bool) public isProxy;
 
     address public LiquidityPool;
     address[] public myRouters;
@@ -63,22 +62,6 @@ contract BITBAY {
     event ApprovalReserve(address from, address to, uint amount);
     event Transfer(address from, address to, uint amount);
     event TransferReserve(address from, address to, uint amount);
-    
-    //Safe math functions
-    function mulDiv(uint x, uint y, uint z) internal pure returns (uint) {
-      uint a = x / z; uint b = x % z; // x = a * z + b
-      uint c = y / z; uint d = y % z; // y = c * z + d
-      return a * b * z + a * d + b * c + b * d / z;
-    }
-    function add(uint x, uint y) internal pure returns (uint z) {
-        require((z = x + y) >= x, 'ds-math-add-overflow');
-    }
-    function sub(uint x, uint y) internal pure returns (uint z) {
-        require((z = x - y) <= x, 'ds-math-sub-underflow');
-    }
-    function mul(uint x, uint y) internal pure returns (uint z) {
-        require(y == 0 || (z = x * y) / y == x, 'ds-math-mul-overflow');
-    }
     
     // Constructor code is only run when the contract is created
     constructor() {
@@ -97,7 +80,7 @@ contract BITBAY {
     
     //Users need to separate frozen coins until they unlock
     //Solidity has limited support for nested arrays or structs or multidimensional return values. So we need several variables for frozen funds
-    mapping (address => uint[30][4]) public FrozenTXDB;
+    mapping (address => uint64[30][4]) public FrozenTXDB;
     mapping (address => uint[2][4]) public FrozenTXDBTimeSpent;
     mapping (address => uint) public recenttimestamp;
     mapping (address => uint) public unspentslots;
@@ -159,6 +142,19 @@ contract BITBAY {
         return (currentSupply, pegsteps, microsteps, pegrate, deflationrate);
     }
 
+    function store64(uint[38] memory input) private pure returns (uint64[38] memory output) {
+        for (uint i; i < 38; i++) {
+            if (input[i] > type(uint64).max) revert();
+            output[i] = uint64(input[i]);
+        }
+    }
+
+    function get64(uint64[38] memory input) private pure returns (uint[38] memory output) {
+        for (uint i; i < 38; i++) {
+            output[i] = uint(input[i]);
+        }
+    }
+
     // Sends an amount of newly created coins to an address, used for the BAY bridge
     // Can only be called by the contract creator or routers
     function mint(address receiver, uint[38] memory reserve) public returns (bool) {
@@ -183,30 +179,30 @@ contract BITBAY {
             if (a.i == a.section) {
                 while (a.j < a.mk) {
                     require(reserve[a.pegsteps + a.j] >= 0);
-                    amount = add(amount, reserve[a.pegsteps + a.j]);
-                    a.reserve[a.pegsteps + a.j] = add(a.reserve[a.pegsteps + a.j], reserve[a.pegsteps + a.j]); //We consolidate to the supply index
+                    amount += reserve[a.pegsteps + a.j];
+                    a.reserve[a.pegsteps + a.j] += reserve[a.pegsteps + a.j]; //We consolidate to the supply index
                     if(isRouter[msg.sender]) {
-                        reserve2[a.pegsteps + a.j] = sub(reserve2[a.pegsteps + a.j], reserve[a.pegsteps + a.j]);
+                        reserve2[a.pegsteps + a.j] -= reserve[a.pegsteps + a.j];
                     }
                     a.j += 1;
                 }
             }
             else {
                 require(reserve[a.i] >= 0);
-                amount = add(amount, reserve[a.i]);
-                a.reserve[a.i] = add(a.reserve[a.i], reserve[a.i]);
+                amount += reserve[a.i];
+                a.reserve[a.i] += reserve[a.i];
                 if(isRouter[msg.sender]) {
-                    reserve2[a.i] = sub(reserve2[a.i], reserve[a.i]);
+                    reserve2[a.i] -= reserve[a.i];
                 }
             }
             a.i += 1;
         }
         require(amount <= totalSupply);
         if(isRouter[msg.sender]) {
-            Rbalances[msg.sender] = reserve2;
+            Rbalances[msg.sender] = store64(reserve2);
             highkey[msg.sender] = a.section;
         }
-        Rbalances[receiver] =  a.reserve;
+        Rbalances[receiver] =  store64(a.reserve);
         //highkey tells us the microshard section we are currently in
         highkey[receiver] = a.section;
         register(receiver);
@@ -320,44 +316,13 @@ contract BITBAY {
         return true;
     }
 
-    function increaseAllowance(address spender, uint value, address proxyaddy, uint BAY_BAYR) public returns (bool) {
-        require(active);
-        require(spender != address(0));
-        address sender;
-        sender = msg.sender;
-        if (isProxy[msg.sender]) {
-            sender = proxyaddy;
+    function getFrozen(address user) public view returns (uint[30][4] memory output) {
+        for (uint i = 0; i < 4; i++) {
+            for (uint j = 0; j < 30; j++) {
+                output[i][j] = uint(FrozenTXDB[user][i][j]);
+            }
         }
-        if(BAY_BAYR == 0) {
-            allowed[sender][spender] = add(allowed[sender][spender], value);
-            emit Approval(sender, spender, allowed[sender][spender]);
-        } else {
-            allowedReserve[sender][spender] = add(allowedReserve[sender][spender], value);
-            emit ApprovalReserve(sender, spender, allowedReserve[sender][spender]);
-        }
-        return true;
-    }
-    
-    function decreaseAllowance(address spender, uint value, address proxyaddy, uint BAY_BAYR) public returns (bool) {
-        require(active);
-        require(spender != address(0));
-        address sender;
-        sender = msg.sender;
-        if (isProxy[msg.sender]) {
-            sender = proxyaddy;
-        }
-        if(BAY_BAYR == 0) {
-            allowed[sender][spender] = sub(allowed[sender][spender], value);
-            emit Approval(sender, spender, allowed[sender][spender]);
-        } else {
-            allowedReserve[sender][spender] = sub(allowedReserve[sender][spender], value);
-            emit ApprovalReserve(sender, spender, allowedReserve[sender][spender]);
-        }
-        return true;
-    }
-
-    function getFrozen(address user) public view returns (uint[30][4] memory) {
-        return FrozenTXDB[user];
+        return output;
     }
 
     //IMPORTANT: You can find out what your balance will be at any supply by passing an optional variable to this function.
@@ -365,7 +330,7 @@ contract BITBAY {
     //arranged in advance. It's also useful for private contracts and just generally predicting how fast your account will deflate.
     function calculateBalance(address user, uint buffer) public view returns (uint, uint, uint[38] memory) {
         calcLocals memory a;
-        a.reserve = Rbalances[user];
+        a.reserve = get64(Rbalances[user]);
         a.highkey = highkey[user];
         a.supply = currentSupply;
         if (buffer != 0) {
@@ -429,7 +394,7 @@ contract BITBAY {
         return (a.liquid, a.rval, a.reserve);
     }
 
-    function isAMMExchange(address AMM) private returns (bool) {
+    function isAMMExchange(address AMM) public returns (bool) {
         bool success;
         bytes memory result;
         if (AMM.code.length == 0) {
@@ -442,7 +407,7 @@ contract BITBAY {
             } else {
                 return false;
             }
-        }        
+        }
         address[3] memory myaddy;
         //This is like a try/catch to detect an AMM pair.
         (success, result) = LiquidityPool.call(abi.encodeWithSignature("checkAMM(address)",AMM));
@@ -455,7 +420,7 @@ contract BITBAY {
                     isAMM[AMM] = 1;
                     return true;
                 }
-            }            
+            }
         }
         isAMM[AMM] = 2;
         return false;
@@ -478,7 +443,7 @@ contract BITBAY {
         }
         if (sender != b.sender2) {
             require(amount <= allowed[sender][b.sender2]);
-            allowed[sender][b.sender2] = sub(allowed[sender][b.sender2], amount);
+            allowed[sender][b.sender2] -= amount;
         }
         if (automaticUnfreeze) {
             ReleaseFrozenFunds(sender);
@@ -515,7 +480,7 @@ contract BITBAY {
                     a.i += 1;
                 }
                 register(mintTo[sender]);
-                Rbalances[mintTo[sender]] = reserve2;
+                Rbalances[mintTo[sender]] = store64(reserve2);
                 highkey[mintTo[sender]] = a.section;
                 emit Transfer(sender, mintTo[sender], a.newtot);
                 mintTo[sender] = address(0);  
@@ -529,7 +494,7 @@ contract BITBAY {
         }
         require(amount <= liquid); //"Insufficient liquid balance."
         if (sender == receiver) {
-            Rbalances[sender] = reserve;
+            Rbalances[sender] = store64(reserve);
             highkey[sender] = a.section; //They essentially paid to update their balance
             lock = false;
             return true;
@@ -541,7 +506,7 @@ contract BITBAY {
             if(receiver != minter) {
                 (,, reserve2) = calculateBalance(receiver, 0);
             }
-        } else { //Deposit detected
+        } else { //Deposit or trade detected: Minter can register AMM pair as a router after first deposit so trades can happen directly.
             if(routerVars[b.sender2][0] == 0) {
                 require(isRouter[b.sender2]); //Must be sent from a router that won't exploit deposits. This is to allow direct sales from an AMM
                 routerVars[b.sender2][0] = 3;
@@ -552,7 +517,7 @@ contract BITBAY {
         a.liquid = 0;
         a.newtot = 0;
         while (a.i < a.mk - a.k) {
-            a.liquid = mul(reserve[a.pegsteps + a.k + a.i],amount) / liquid;
+            a.liquid = (reserve[a.pegsteps + a.k + a.i] * amount) / liquid;
             reserve[a.pegsteps + a.k + a.i] -= a.liquid;
             reserve2[a.pegsteps + a.k + a.i] += a.liquid;
             a.newtot += a.liquid;
@@ -560,13 +525,13 @@ contract BITBAY {
         }
         a.i = a.section + 1;
         while (a.i < a.pegsteps) {
-            a.liquid = mul(reserve[a.i],amount) / liquid;
+            a.liquid = (reserve[a.i] * amount) / liquid;
             reserve[a.i] -= a.liquid;
             reserve2[a.i] += a.liquid;
             a.newtot += a.liquid;
             a.i += 1;
         }
-        uint remainder = sub(amount, a.newtot);
+        uint remainder = (amount - a.newtot);
         a.i = 0;
         while (a.i < a.mk - a.k) {
             if (remainder == 0) {
@@ -608,14 +573,14 @@ contract BITBAY {
             if(receiver == minter) {
                 IMinter(minter).burn(sender,reserve2,a.section);
             } else {
-                Rbalances[receiver] =  reserve2;
+                Rbalances[receiver] =  store64(reserve2);
                 highkey[receiver] = a.section; //highkey tells us the microshard section we are currently in
             }
         }
         if (b.AMMstatus == 1) { //We have detected the user might be buying from an AMM
             ILiquidityPool(LiquidityPool).withdrawBuy(sender,reserve,a.section);
         } else {
-            Rbalances[sender] = reserve;
+            Rbalances[sender] = store64(reserve);
             highkey[sender] = a.section; //highkey tells us the microshard section we are currently in
         }        
         emit Transfer(sender, receiver, a.newtot);//A recipient will want to wait enough transactions to avoid a reorganization if the sender is too close to supply change
@@ -638,7 +603,7 @@ contract BITBAY {
         }       
         if (sender != b.sender2) {
             require(amount <= allowedReserve[sender][b.sender2]);
-            allowedReserve[sender][b.sender2] = sub(allowedReserve[sender][b.sender2], amount);
+            allowedReserve[sender][b.sender2] -= amount;
         }
         //Balance will recalculate. Be careful to predict which reserve coins might become liquid on peg change so TX goes through
         if (automaticUnfreeze) {
@@ -694,7 +659,7 @@ contract BITBAY {
                     a.i += 1;
                 }
                 register(mintTo[sender]);
-                Rbalances[mintTo[sender]] = a.reserve;
+                Rbalances[mintTo[sender]] = store64(a.reserve);
                 highkey[mintTo[sender]] = a.section;
                 emit TransferReserve(sender, mintTo[sender], a.newtot);
                 mintTo[sender] = address(0);  
@@ -723,13 +688,13 @@ contract BITBAY {
                         }
                         require(specialtx[a.pegsteps + a.j] >= 0); //"Negative value passed"
                         require(specialtx[a.pegsteps + a.j] <= reserve[a.pegsteps + a.j]); //"Index does not contain enough micro-reserve!"
-                        amount = add(amount, specialtx[a.pegsteps + a.j]);
+                        amount += specialtx[a.pegsteps + a.j];
                         if(b.mysize != a.pegsteps) {
-                            reserve2[a.pegsteps + a.j] = add(reserve2[a.pegsteps + a.j], specialtx[a.pegsteps + a.j]);
+                            reserve2[a.pegsteps + a.j] += specialtx[a.pegsteps + a.j];
                         } else {
-                            reserve2[a.i] = add(reserve2[a.i], specialtx[a.pegsteps + a.j]); //We consolidate to the supply index
+                            reserve2[a.i] += specialtx[a.pegsteps + a.j]; //We consolidate to the supply index
                         }
-                        reserve[a.pegsteps + a.j] = sub(reserve[a.pegsteps + a.j], specialtx[a.pegsteps + a.j]);
+                        reserve[a.pegsteps + a.j] -= specialtx[a.pegsteps + a.j];
                         a.j += 1;
                     }
                     break;
@@ -737,9 +702,9 @@ contract BITBAY {
                 if (a.i < a.section) {
                     require(specialtx[a.i] >= 0); //"Negative value passed"
                     require(specialtx[a.i] <= reserve[a.i]); //"Index does not contain enough reserve!"
-                    amount = add(amount, specialtx[a.i]);
-                    reserve2[a.i] = add(reserve2[a.i], specialtx[a.i]);
-                    reserve[a.i] = sub(reserve[a.i], specialtx[a.i]);
+                    amount += specialtx[a.i];
+                    reserve2[a.i] += specialtx[a.i];
+                    reserve[a.i] -= specialtx[a.i];
                 }
                 a.i += 1;
             }
@@ -761,7 +726,7 @@ contract BITBAY {
                         if (a.j == a.k) {
                             break;
                         }
-                        propval = mul(amount, reserve[a.pegsteps + a.j]) / b.rval;
+                        propval = (amount * reserve[a.pegsteps + a.j]) / b.rval;
                         if(b.mysize != a.pegsteps) {
                             reserve2[a.pegsteps + a.j] += propval;
                         } else {
@@ -774,14 +739,14 @@ contract BITBAY {
                     break;
                 }
                 if (a.i < a.section) {
-                    propval = mul(amount, reserve[a.i]) / b.rval;
+                    propval = (amount * reserve[a.i]) / b.rval;
                     reserve2[a.i] += propval;
                     reserve[a.i] -= propval;
                     a.newtot += propval;
                 }
                 a.i += 1;
             }
-            uint remainder = sub(amount, a.newtot);
+            uint remainder = (amount - a.newtot);
             if (remainder > 0) {
                 a.i = 0;
                 a.j = 0;
@@ -840,15 +805,15 @@ contract BITBAY {
                     a.reserve[a.i] += reserve2[a.i];
                     a.i += 1;
                 }
-                Rbalances[receiver] = a.reserve;
+                Rbalances[receiver] = store64(a.reserve);
                 highkey[receiver] = a.section;
             }
         } else {
-            Rbalances[sender] = reserve;
+            Rbalances[sender] = store64(reserve);
             highkey[sender] = a.section;
         }
         //There is no time delay for deposits and sales to an approved AMM
-        if (b.AMMstatus == 2) { //We have detected the user might be depositing to an AMM
+        if (b.AMMstatus == 2) { //Deposit or trade detected: Minter can register AMM pair as a router after first deposit so trades can happen directly.
             if (routerVars[b.sender2][1] == 0) {
                 require(isRouter[b.sender2]); //Must be sent from a router that won't exploit deposits. This is to allow direct sales from an AMM
                 routerVars[b.sender2][1] = 3;
@@ -870,7 +835,7 @@ contract BITBAY {
                 a.reserve[a.i] += reserve2[a.i];
                 a.i += 1;
             }
-            Rbalances[receiver] = a.reserve;
+            Rbalances[receiver] = store64(a.reserve);
             highkey[receiver] = a.section;
         }
         uint overwrite = 1;
@@ -893,7 +858,8 @@ contract BITBAY {
                         FrozenTXDBTimeSpent[receiver][a.i][1] = recenttimestamp[receiver];
                         a.j = 0;
                         while (a.j < a.pegsteps) {
-                            FrozenTXDB[receiver][a.i][a.j] = reserve2[a.j];
+                            if (reserve2[a.j] > type(uint64).max) revert();
+                            FrozenTXDB[receiver][a.i][a.j] = uint64(reserve2[a.j]);
                             a.j += 1;
                         }
                         unspentslots[receiver] += 1;
@@ -916,7 +882,8 @@ contract BITBAY {
                 require(FrozenTXDBTimeSpent[receiver][a.i][0] == 1); //"Slot not filled"
                 a.j = 0;
                 while (a.j < a.pegsteps) {
-                    FrozenTXDB[receiver][a.i][a.j] += reserve2[a.j];
+                    if (reserve2[a.j] > type(uint64).max) revert();
+                    FrozenTXDB[receiver][a.i][a.j] += uint64(reserve2[a.j]);
                     a.j += 1;
                 }
             }
@@ -929,7 +896,7 @@ contract BITBAY {
     //Move timelocked funds to your main balance
     function ReleaseFrozenFunds(address receiver) public returns (bool) {
         calcLocals memory a;
-        a.reserve = Rbalances[receiver];
+        a.reserve = get64(Rbalances[receiver]);
         a.pegsteps = pegsteps;
         a.mk = microsteps;
         a.supply = currentSupply;
@@ -948,7 +915,7 @@ contract BITBAY {
                 found = 1;
                 a.j = 0;
                 while (a.j < a.pegsteps) {
-                    val = FrozenTXDB[receiver][a.i][a.j];
+                    val = uint(FrozenTXDB[receiver][a.i][a.j]);
                     if (a.j < a.section) {
                         a.reserve[a.j] += val;
                         res += val;
@@ -984,7 +951,7 @@ contract BITBAY {
         if (found == 0) {
             return false;
         }
-        Rbalances[receiver] = a.reserve;
+        Rbalances[receiver] = store64(a.reserve);
         emit TransferReserve(receiver, receiver, res);
         emit Transfer(receiver, receiver, liq);
         return true;
